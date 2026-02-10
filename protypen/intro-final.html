@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Centercore – Cabin Log Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cyan: #00f0ff;
+      --magenta: #ff00aa;
+      --green: #00ff9d;
+      --dark: #0a0015;
+      --text: #e0f7ff;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      height: 100vh;
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Orbitron', sans-serif;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 20% 30%, #1a0033, #000814);
+    }
+    .container {
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    h1 {
+      font-size: clamp(4rem, 12vw, 12rem);
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      color: transparent;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--green), var(--cyan));
+      background-size: 400%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: quantumShift 12s linear infinite, glitch 4s infinite;
+      text-shadow: 0 0 30px rgba(0,240,255,0.6);
+      position: relative;
+      display: inline-block;
+    }
+    /* Quantum Ripple Glitch */
+    h1::before,
+    h1::after {
+      content: "Centercore";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: inherit;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      opacity: 0.08;
+      mix-blend-mode: screen;
+    }
+    h1::before { animation: ripple 6s infinite ease-in-out; transform: translate(2px, -2px); }
+    h1::after  { animation: ripple 8s infinite reverse ease-in-out; transform: translate(-2px, 2px); }
+
+    .subtitle {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 1.4rem;
+      margin: 1.5rem 0 3rem;
+      opacity: 0.85;
+      letter-spacing: 0.15em;
+    }
+    .enter-btn {
+      display: inline-block;
+      padding: 1.2rem 3.5rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--cyan);
+      border: 2px solid var(--cyan);
+      background: transparent;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      cursor: pointer;
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .enter-btn:hover {
+      color: var(--dark);
+      background: var(--cyan);
+      box-shadow: 0 0 40px var(--cyan);
+      transform: scale(1.08);
+    }
+    .enter-btn::before {
+      content: "";
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: 0.7s;
+    }
+    .enter-btn:hover::before { left: 100%; }
+
+    /* Hintergrund Data-Stream / Runen-Fragmente */
+    .bg-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.15;
+    }
+
+    @keyframes quantumShift {
+      0%,100% { background-position: 0% 50%; }
+      50%     { background-position: 100% 50%; }
+    }
+    @keyframes glitch {
+      0%, 4%, 8%, 12%, 100% { transform: translate(0); }
+      2%  { transform: translate(-2px, 2px); }
+      6%  { transform: translate(2px, -2px); }
+      10% { transform: translate(-1px, 1px); }
+    }
+    @keyframes ripple {
+      0%,100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      50%     { clip-path: polygon(5% 5%, 95% 5%, 95% 95%, 5% 95%); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-particles" id="particles"></div>
+
+  <div class="container">
+    <h1>Centercore</h1>
+    <div class="subtitle">Cabin Log Terminal • Access Point</div>
+    <a href="terminal.html" class="enter-btn">ENTER CABIN</a>
+  </div>
+
+  <script>
+    // Sehr leichter Data-Stream / Runen-Partikel-Effekt
+    const particles = document.getElementById('particles');
+    for(let i = 0; i < 80; i++) {
+      const p = document.createElement('div');
+      p.style.cssText = `
+        position: absolute;
+        color: ${Math.random() > 0.5 ? 'var(--cyan)' : 'var(--green)'};
+        font-family: 'Roboto Mono', monospace;
+        font-size: ${Math.random()*1.2 + 0.6}rem;
+        left: ${Math.random()*100}%;
+        top: ${Math.random()*100}%;
+        animation: fall ${Math.random()*20 + 15}s linear infinite;
+        opacity: ${Math.random()*0.4 + 0.1};
+        transform: rotate(${Math.random()*360}deg);
+      `;
+      p.textContent = String.fromCharCode(0x16A0 + Math.floor(Math.random()*80)); // Runen-Bereich
+      particles.appendChild(p);
+    }
+  </script>
+
+  <style>
+    @keyframes fall {
+      0%   { transform: translateY(-100vh) rotate(0deg); }
+      100% { transform: translateY(200vh) rotate(720deg); }
+    }
+  </style>
+
+</body>
+</html>

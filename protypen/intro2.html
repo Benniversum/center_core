@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Centercore – Cabin Log Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cyan: #00f0ff;
+      --magenta: #ff00aa;
+      --green: #00ff9d;
+      --dark: #0a0015;
+      --text: #e0f7ff;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      height: 100vh;
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Orbitron', sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+    canvas#bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.25; /* entspannter durch niedrige Opacity */
+    }
+    .container {
+      position: relative;
+      z-index: 2;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    h1 {
+      font-size: clamp(5rem, 15vw, 14rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: transparent;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--green), var(--cyan));
+      background-size: 400%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: quantumShift 18s linear infinite, subtleGlitch 7s infinite;
+      text-shadow: 0 0 40px rgba(0,240,255,0.4);
+    }
+    .subtitle {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 1.5rem;
+      margin: 2rem 0 4rem;
+      opacity: 0.8;
+      letter-spacing: 0.2em;
+    }
+    .enter-btn {
+      padding: 1.4rem 4rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--cyan);
+      border: 2px solid var(--cyan);
+      background: transparent;
+      text-transform: uppercase;
+      letter-spacing: 0.35em;
+      cursor: pointer;
+      transition: all 0.5s;
+      position: relative;
+      overflow: hidden;
+    }
+    .enter-btn:hover {
+      color: var(--dark);
+      background: var(--cyan);
+      box-shadow: 0 0 50px var(--cyan);
+      transform: scale(1.1);
+    }
+
+    @keyframes quantumShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    @keyframes subtleGlitch {
+      0%, 96%, 100% { transform: translate(0); }
+      2%  { transform: translate(-1.5px, 1.5px); }
+      4%  { transform: translate(1.5px, -1.5px); }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="container">
+    <h1>Centercore</h1>
+    <div class="subtitle">Cabin Log Terminal • Quantum Access</div>
+    <a href="terminal.html" class="enter-btn">ENTER CABIN</a>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Entspannte Wellen-Mesh-Animation (inspiriert von Matrix/Grid, aber slow & calm)
+    const gridSize = 40;          // Weniger Punkte → entspannter
+    const waveSpeed = 0.0008;     // Sehr langsam
+    const amplitude = 25;         // Sanfte Wellen
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const time = Date.now();
+
+      for (let x = 0; x < canvas.width; x += gridSize) {
+        for (let y = 0; y < canvas.height; y += gridSize) {
+          const distX = x - canvas.width / 2;
+          const distY = y - canvas.height / 2;
+          const dist = Math.sqrt(distX*distX + distY*distY);
+
+          // Sanfte Sinus-Welle + Puls
+          const offset = Math.sin(dist * 0.008 + time * waveSpeed) * amplitude;
+          const hue = (time * 0.00005 + dist * 0.1) % 360;
+
+          ctx.beginPath();
+          ctx.arc(x + offset * 0.5, y + offset * 0.3, 1.8, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${hue}, 80%, 60%, 0.15)`; // Weich & transparent
+          ctx.fill();
+
+          // Leichte Verbindungslinien (nur nah beieinander, low density)
+          if (Math.random() < 0.02) { // Sehr selten zeichnen
+            ctx.strokeStyle = `hsla(${hue + 180}, 70%, 50%, 0.08)`;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + gridSize, y + Math.sin(time * waveSpeed * 2) * 10);
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+
+</body>
+</html>

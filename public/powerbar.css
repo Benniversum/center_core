@@ -1,0 +1,180 @@
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0a0a;
+            color: #0ff;
+            font-family: 'VT323', monospace;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        #powerbar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 70px;
+            background: linear-gradient(180deg, #111 0%, #0a0a0a 100%);
+            border-right: 2px solid transparent;
+            box-shadow: 0 0 20px #0ff inset;
+            transition: width .45s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            z-index: 1000;
+        }
+        
+        #powerbar.expanded {
+            width: 280px;
+            border-right: 2px solid #0ff;
+            box-shadow: 0 0 40px #0ff, 0 0 60px #0ff inset;
+        }
+        
+        .toggle {
+            position: absolute;
+            top: 12px;
+            right: 10px;
+            font-size: 1.6rem;
+            color: #0ff;
+            cursor: pointer;
+            text-shadow: 0 0 10px #0ff;
+            transition: transform .4s, text-shadow .3s;
+        }
+        
+        .expanded .toggle {
+            transform: rotate(180deg);
+        }
+        
+        .toggle:hover {
+            text-shadow: 0 0 20px #0ff;
+        }
+        
+        .title {
+            text-align: center;
+            margin: 60px 0 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            color: #0ff;
+            text-shadow: 0 0 15px #0ff;
+            opacity: 0;
+            transition: opacity .5s .2s;
+        }
+        
+        .expanded .title {
+            opacity: 1;
+        }
+        
+        .menu a {
+            display: flex;
+            align-items: center;
+            padding: 14px 12px;
+            color: #888;
+            text-decoration: none;
+            font-size: 1.4rem;
+            transition: all .3s;
+        }
+        
+        .menu a:hover {
+            color: #0ff;
+            background: rgba(0, 255, 255, 0.1);
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .menu a .icon {
+            width: 40px;
+            text-align: center;
+        }
+        
+        .menu a .label {
+            font-size: 0.9rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s;
+            white-space: nowrap;
+        }
+        
+        .expanded .menu a .label {
+            opacity: 1;
+            visibility: visible;
+            margin-left: 12px;
+        }
+        
+        .pomodoro {
+            margin: 20px 10px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .4s .2s;
+        }
+        
+        .expanded .pomodoro {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .pomodoro input,
+        .pomodoro select {
+            width: 100%;
+            margin: 6px 0;
+            padding: 6px;
+            background: #111;
+            border: 1px solid #0ff;
+            color: #0ff;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        
+        .pomodoro .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        
+        .pomodoro button {
+            background: #0ff;
+            color: #000;
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all .2s;
+        }
+        
+        .pomodoro button:disabled {
+            background: #333;
+            color: #888;
+            cursor: not-allowed;
+        }
+        
+        .pomodoro button:hover:not(:disabled) {
+            box-shadow: 0 0 15px #0ff;
+        }
+        
+        #pomo-timer {
+            color: #0f0;
+            font-family: monospace;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1.6rem;
+            text-shadow: 0 0 10px #0f0;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #555;
+            opacity: 0;
+            transition: opacity .4s;
+        }
+        
+        .expanded .footer {
+            opacity: 1;
+        }

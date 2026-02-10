@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Centercore – Cabin Log Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cyan: #00f0ff;
+      --magenta: #ff00aa;
+      --green: #00ff9d;
+      --dark: #05000f;
+      --text: #f0fbff;
+    }
+    body {
+      margin: 0;
+      height: 100vh;
+      background: var(--dark);
+      overflow: hidden;
+      font-family: 'Orbitron', sans-serif;
+      position: relative;
+    }
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+    #layer2 { opacity: 0.18; } /* mittlere Ebene – Code-Stream */
+    #layer1 { opacity: 0.35; } /* tiefste Ebene – Mesh */
+
+    .content {
+      position: relative;
+      z-index: 3;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      pointer-events: none;
+    }
+    h1 {
+      font-size: clamp(6rem, 18vw, 16rem);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      color: transparent;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--green), var(--cyan));
+      background-size: 500% 500%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: quantumFlow 25s ease infinite;
+      text-shadow: 
+        0 0 20px rgba(0,240,255,0.7),
+        0 0 60px rgba(255,0,170,0.4),
+        inset 0 0 30px rgba(0,255,157,0.3);
+      filter: drop-shadow(0 0 15px var(--cyan));
+      animation: glitch 5s infinite steps(1);
+    }
+    h1 span { animation: pulseLetter 8s infinite; }
+    .subtitle {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 1.8rem;
+      margin: 2.5rem 0 5rem;
+      opacity: 0.9;
+      letter-spacing: 0.25em;
+      text-shadow: 0 0 15px var(--green);
+    }
+    .enter-btn {
+      pointer-events: auto;
+      padding: 1.5rem 5rem;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--cyan);
+      border: 3px solid var(--cyan);
+      background: rgba(0,240,255,0.05);
+      backdrop-filter: blur(6px);
+      text-transform: uppercase;
+      letter-spacing: 0.4em;
+      cursor: pointer;
+      transition: all 0.6s;
+      box-shadow: 0 0 30px rgba(0,240,255,0.3);
+    }
+    .enter-btn:hover {
+      background: var(--cyan);
+      color: var(--dark);
+      box-shadow: 0 0 80px var(--cyan);
+      transform: scale(1.12);
+    }
+
+    @keyframes quantumFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes glitch {
+      0%, 92%, 100% { transform: translate(0); }
+      4%  { transform: translate(-3px, 3px); }
+      8%  { transform: translate(3px, -3px); }
+    }
+    @keyframes pulseLetter { 0%,100% { opacity: 1; } 50% { opacity: 0.85; } }
+  </style>
+</head>
+<body>
+
+  <canvas id="layer1"></canvas> <!-- tief: Mesh -->
+  <canvas id="layer2"></canvas> <!-- mittel: Code-Stream -->
+
+  <div class="content">
+    <h1>C<span>e</span>nter<span>c</span>ore</h1>
+    <div class="subtitle">Cabin Log Terminal • Quantum Gateway</div>
+    <a href="terminal.html" class="enter-btn">ENTER CABIN</a>
+  </div>
+
+  <script>
+    // Hilfsfunktion: Canvas setup
+    function setupCanvas(id) {
+      const c = document.getElementById(id);
+      const ctx = c.getContext('2d');
+      function resize() { c.width = window.innerWidth; c.height = window.innerHeight; }
+      window.addEventListener('resize', resize);
+      resize();
+      return {c, ctx};
+    }
+
+    // Ebene 1: langsames organisches Mesh
+    const l1 = setupCanvas('layer1');
+    const grid = 60;
+    const amp = 18;
+    const speed1 = 0.0004;
+
+    function drawLayer1() {
+      const t = Date.now();
+      l1.ctx.clearRect(0, 0, l1.c.width, l1.c.height);
+      for (let x = 0; x < l1.c.width; x += grid) {
+        for (let y = 0; y < l1.c.height; y += grid) {
+          const d = Math.hypot(x - l1.c.width/2, y - l1.c.height/2);
+          const off = Math.sin(d * 0.006 + t * speed1) * amp;
+          l1.ctx.fillStyle = `hsla(${ (t*0.00003 + d*0.08) % 360 }, 70%, 55%, 0.22)`;
+          l1.ctx.fillRect(x + off, y + off*0.6, 2.5, 2.5);
+        }
+      }
+      requestAnimationFrame(drawLayer1);
+    }
+    drawLayer1();
+
+    // Ebene 2: langsamer durchscrollender Code / Runen
+    const l2 = setupCanvas('layer2');
+    const symbols = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ00110101△□○◇✦⚛⌬⟁';
+    const columns = Math.floor(l2.c.width / 20) + 1;
+    const drops = Array(columns).fill(1);
+
+    function drawLayer2() {
+      l2.ctx.fillStyle = 'rgba(10,0,21,0.06)'; // sanfter Trail
+      l2.ctx.fillRect(0, 0, l2.c.width, l2.c.height);
+
+      l2.ctx.font = '16px Roboto Mono';
+      l2.ctx.fillStyle = 'rgba(0,240,255,0.45)';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = symbols[Math.floor(Math.random() * symbols.length)];
+        const x = i * 20;
+        const y = drops[i] * 20;
+        l2.ctx.fillText(text, x, y);
+
+        if (y > l2.c.height && Math.random() > 0.975) drops[i] = 0; // langsamer Reset
+        drops[i] += 0.4; // SEHR LANGSAM fallen lassen
+      }
+      requestAnimationFrame(drawLayer2);
+    }
+    drawLayer2();
+  </script>
+
+</body>
+</html>

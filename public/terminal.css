@@ -1,0 +1,153 @@
+:root {
+    --bg: #0a0015;
+    --text: #00f0ff;
+    --accent: #ff00aa;
+    --green: #00ff9d;
+    --gray: #666;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier New', 'Roboto Mono', monospace;
+    overflow: hidden;
+}
+
+body.crt-enabled {
+    filter: contrast(1.1) brightness(0.95) sepia(0.05);
+    background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+}
+
+body.crt-enabled .output::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient( to bottom, transparent 0px, rgba(0, 0, 0, 0.08) 1px, transparent 2px, transparent 4px);
+    z-index: 10;
+    mix-blend-mode: multiply;
+    animation: scanline 10s linear infinite;
+}
+
+@keyframes scanline {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+.terminal-window {
+    width: 92vw;
+    max-width: 1280px;
+    height: 92vh;
+    margin: 4vh auto;
+    background: rgba(8, 0, 18, 0.92);
+    border: 2px solid var(--text);
+    border-radius: 6px;
+    box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.header {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--text);
+    font-size: 1.1rem;
+}
+
+.led {
+    margin-right: 6px;
+    font-size: 1.4rem;
+    animation: blink 1.8s infinite;
+}
+
+.led.online {
+    color: var(--green);
+}
+
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.output {
+    flex: 1;
+    padding: 16px 20px;
+    overflow-y: auto;
+    font-size: 1.05rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+}
+
+.input-area {
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border-top: 1px solid var(--text);
+    display: flex;
+    align-items: center;
+}
+
+.prompt {
+    color: var(--green);
+    min-width: 160px;
+    white-space: nowrap;
+}
+
+#command-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 1.05rem;
+    outline: none;
+    font-family: inherit;
+}
+
+.archive-btn {
+    position: absolute;
+    bottom: 16px;
+    right: 24px;
+    padding: 8px 18px;
+    background: rgba(0, 240, 255, 0.12);
+    border: 1px solid var(--text);
+    color: var(--text);
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.archive-btn:hover {
+    background: var(--text);
+    color: var(--bg);
+}
+
+
+/* Background animation */
+
+.terminal-window {
+    /* ... bestehende Styles ... */
+    background: rgba(8, 0, 18, 0.88);
+    /* etwas transparenter */
+    backdrop-filter: blur(4px);
+    border: 1.5px solid rgba(0, 240, 255, 0.6);
+    box-shadow: 0 0 60px rgba(0, 240, 255, 0.18);
+}
+
+.output {
+    background: rgba(0, 0, 0, 0.3);
+    /* leichter dunkler Overlay für Lesbarkeit */
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cabin Log Terminal – Centercore</title>
+    <link rel="stylesheet" href="terminal.css">
+    <link rel="stylesheet" href="powerbar.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #0a0a0a !important;
+            /* sehr dunkles Grau-Schwarz */
+            color: #0ff;
+            font-family: 'VT323', monospace;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        /* Sicherstellen, dass Canvas ganz hinten liegt */
+        
+        #matrix-rain {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            opacity: 0.14;
+        }
+        
+        .terminal-window {
+            position: relative;
+            z-index: 1;
+            /* über Rain, unter Powerbar */
+        }
+        
+        #powerbar {
+            z-index: 1000;
+            /* immer oben */
+        }
+    </style>
+</head>
+
+<body class="crt-enabled">
+
+    <!-- Runen-Rain als tiefster Layer -->
+    <canvas id="matrix-rain"></canvas>
+
+    <!-- Powerbar -->
+    <aside id="powerbar" class="slim">
+        <div class="toggle" id="toggle">»</div>
+
+        <header class="title">
+            <h1>Centercore</h1>
+        </header>
+
+        <nav class="menu">
+            <ul>
+                <li><a href="#"><span class="icon">🏠</span><span class="label">Home</span></a></li>
+                <li><a href="#"><span class="icon">📅</span><span class="label">Kalender</span></a></li>
+                <li><a href="#"><span class="icon">🪟</span><span class="label">Dashboard</span></a></li>
+                <li><a href="#"><span class="icon">💻</span><span class="label">Terminal</span></a></li>
+                <li><a href="#"><span class="icon">❓</span><span class="label">FAQ</span></a></li>
+            </ul>
+        </nav>
+
+        <section class="pomodoro">
+            <input type="text" id="pomo-input" placeholder="Track eingeben...">
+            <select id="pomo-duration">
+                <option value="2">2 min</option>
+                <option value="3">3 min</option>
+                <option value="4" selected>4 min</option>
+                <option value="5">5 min</option>
+                <option value="6">6 min</option>
+                <option value="7">7 min</option>
+                <option value="8">8 min</option>
+                <option value="9">9 min</option>
+            </select>
+
+            <div class="controls">
+                <button id="pomo-start">▶ Start</button>
+                <button id="pomo-pause" disabled>⏸ Pause</button>
+                <button id="pomo-stop" disabled>⏹ Stop</button>
+            </div>
+
+            <div id="pomo-timer">04:00</div>
+            <div id="txt"></div>
+        </section>
+
+        <footer class="footer">
+            <small>v1.0</small>
+        </footer>
+    </aside>
+
+    <!-- Terminal-Fenster -->
+    <div class="terminal-window">
+        <div class="header">
+            <div class="title">Cabin Log Terminal</div>
+            <div class="status">
+                Systemstatus:
+                <span id="status-led" class="led online">●</span>
+                <span id="status-text">Online</span>
+            </div>
+        </div>
+
+        <div class="output" id="output"></div>
+
+        <div class="input-area">
+            <span class="prompt" id="prompt">guest@localhost $</span>
+            <input type="text" id="command-input" autocomplete="off" placeholder="Befehl eingeben..." autofocus>
+        </div>
+
+        <button class="archive-btn" id="archive-btn">📁 Archiv öffnen</button>
+    </div>
+
+    <script src="terminal.js"></script>
+    <script src="powerbar.js"></script>
+    <!-- korrigierter src -->
+
+    <!-- Runen-Rain Script (direkt hier oder in terminal.js) -->
+    <script>
+        const canvas = document.getElementById('matrix-rain');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const chars = 'ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ∆∇∞⚛⌬⟁✦◇○⬡1010110';
+            const fontSize = 14;
+            const columns = Math.floor(canvas.width / fontSize) + 1;
+            const drops = new Array(columns).fill(1);
+
+            function draw() {
+                ctx.fillStyle = 'rgba(10, 10, 20, 0.06)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.font = fontSize + 'px VT323, monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    const x = i * fontSize;
+                    const y = drops[i] * fontSize;
+
+                    const hue = Math.random() > 0.85 ? 120 : 180;
+                    ctx.fillStyle = `hsla(${hue}, 100%, 70%, ${Math.random() * 0.4 + 0.3})`;
+
+                    ctx.fillText(text, x, y);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i] += 0.35 + Math.random() * 0.25;
+                }
+
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+        }
+    </script>
+
+</body>
+
+</html>
